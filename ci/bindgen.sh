@@ -4,5 +4,5 @@ set -uex
 bindgen \
   --use-core \
   --with-derive-{default,eq,hash,ord} \
-  cblas.h \
-  > src/blas.rs
+  ci/cblas.h \
+  > src/b.rs
