@@ -34,3 +34,4 @@ intel-mkl-src = { version = "0.6.0", default-features = false }
 
 [dev-dependencies]
 approx = "0.3"
+sprs = { version = "0.8", default-features = false }

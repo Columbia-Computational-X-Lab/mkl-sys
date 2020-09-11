@@ -1,3 +1,5 @@
+//! This is based on `bindgen` produced FFI binding for MKL's cblas
+//! (mkl_cblas.h) interface.
 use super::*;
 
 pub const CBLAS_LAYOUT_CblasRowMajor: CBLAS_LAYOUT = 101;

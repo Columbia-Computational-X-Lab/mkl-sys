@@ -1,3 +1,5 @@
+//! This is based on `bindgen` produced FFI binding for MKL's spblas
+//! (sparse blas) interface.
 use super::*;
 
 extern "C" {
@@ -7634,4 +7636,50 @@ extern "C" {
         layout: sparse_layout_t,
         ldc: ::std::os::raw::c_int,
     ) -> sparse_status_t;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use sprs::{prod::mul_acc_mat_vec_csr, CompressedStorage, CsMatViewI};
+
+    #[test]
+    fn csr_mv() {
+        use std::os::raw::{c_char, c_int};
+
+        let indptr: &[i32] = &[0, 3, 3, 5, 6, 7];
+        let indices: &[i32] = &[1, 2, 3, 2, 3, 4, 4];
+        let data: &[f64] = &[
+            0.75672424, 0.1649078, 0.30140296, 0.10358244, 0.6283315, 0.39244208, 0.57202407,
+        ];
+
+        let mat =
+            CsMatViewI::new_view(CompressedStorage::CSR, (5, 5), indptr, indices, data).unwrap();
+        let slice: &[f64] = &[0.1, 0.2, -0.1, 0.3, 0.9];
+        let mut res_vec = vec![0., 0., 0., 0., 0.];
+
+        mul_acc_mat_vec_csr(mat, slice, &mut res_vec);
+
+        let mut mkl_ret = vec![0., 0., 0., 0., 0.];
+
+        let t: u8 = b'N';
+        let m: i32 = res_vec.len() as i32;
+        assert_eq!(std::mem::size_of::<c_int>(), std::mem::size_of::<i32>());
+        unsafe {
+            mkl_cspblas_dcsrgemv(
+                &t as *const u8 as *const c_char,
+                &m as *const i32,
+                mat.data().as_ptr(),
+                mat.indptr().as_ptr() as *const c_int,
+                mat.indices().as_ptr() as *const i32,
+                slice.as_ptr(),
+                mkl_ret.as_mut_ptr(),
+            );
+        }
+
+        assert!(res_vec
+            .iter()
+            .zip(mkl_ret.iter())
+            .all(|(x, y)| approx::abs_diff_eq!(*x, *y, epsilon = f64::EPSILON)));
+    }
 }
