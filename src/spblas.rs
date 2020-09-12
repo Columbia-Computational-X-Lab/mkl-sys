@@ -7647,8 +7647,8 @@ mod tests {
     fn csr_mv() {
         use std::os::raw::{c_char, c_int};
 
-        let indptr: &[i32] = &[0, 3, 3, 5, 6, 7];
-        let indices: &[i32] = &[1, 2, 3, 2, 3, 4, 4];
+        let indptr: &[u32] = &[0, 3, 3, 5, 6, 7];
+        let indices: &[u32] = &[1, 2, 3, 2, 3, 4, 4];
         let data: &[f64] = &[
             0.75672424, 0.1649078, 0.30140296, 0.10358244, 0.6283315, 0.39244208, 0.57202407,
         ];
@@ -7671,7 +7671,7 @@ mod tests {
                 &m as *const i32,
                 mat.data().as_ptr(),
                 mat.indptr().as_ptr() as *const c_int,
-                mat.indices().as_ptr() as *const i32,
+                mat.indices().as_ptr() as *const c_int,
                 slice.as_ptr(),
                 mkl_ret.as_mut_ptr(),
             );
