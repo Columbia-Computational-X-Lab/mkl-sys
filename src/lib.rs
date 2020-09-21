@@ -249,3 +249,31 @@ pub type mkl_jit_status_t = ::std::os::raw::c_uint;
 
 pub mod blas;
 pub mod spblas;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use num_complex::*;
+
+    #[test]
+    fn complex8() {
+        use std::mem::size_of;
+        assert_eq!(size_of::<Complex32>(), size_of::<Complex8>());
+        let v = Complex8 { real: 1.2_f32, imag: 2.4_f32 };
+        let b = unsafe { std::ptr::read(&v as *const _ as *const Complex32) };
+        
+        assert_eq!(v.real, b.re);
+        assert_eq!(v.imag, b.im);
+    }
+
+    #[test]
+    fn complex16() {
+        use std::mem::size_of;
+        assert_eq!(size_of::<Complex64>(), size_of::<Complex16>());
+        let v = Complex16 { real: 1.2, imag: 2.4 };
+        let b = unsafe { std::ptr::read(&v as *const _ as *const Complex64) };
+        
+        assert_eq!(v.real, b.re);
+        assert_eq!(v.imag, b.im);
+    }
+}

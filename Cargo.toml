@@ -1,6 +1,6 @@
 [package]
 name = "mkl-sys"
-version = "0.1.2"
+version = "0.1.4"
 authors = ["Changxi Zheng <cxz@cs.columbia.edu>"]
 edition = "2018"
 
@@ -29,9 +29,10 @@ mkl-dynamic-ilp64-seq  = ["intel-mkl-src/mkl-dynamic-ilp64-seq"]
 download = ["intel-mkl-src/download"]
 
 [dependencies]
-libc = "0.2"
+libc = "0.2.77"
 intel-mkl-src = { version = "0.6.0", default-features = false }
 
 [dev-dependencies]
-approx = "0.3"
-sprs = { version = "0.8", default-features = false }
+approx = "0.3.2"
+num-complex = "0.3.0"
+sprs = { version = "0.8.1", default-features = false }
